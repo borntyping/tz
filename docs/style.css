@@ -1,4 +1,4 @@
-html, body, #main {
+html, body {
     height: 100%;
 }
 
@@ -6,12 +6,22 @@ body {
     font-family: Helvetica, sans-serif;
     font-family: 'Trebuchet MS', sans-serif;
 
-    --purple-dark: #8e44ad;
-    --purple-light: #9b59b6;
-    --black-dark: #2c3e50;
-    --black-light:#34495e;
-    --blue-dark: #2980b9;
+    --turquoise-light: #1abc9c;
+    --turquoise-dark: #16a085;
+    --green-light: #2ECC71;
+    --green-dark: #27AE60;
     --blue-light: #3498db;
+    --blue-dark: #2980b9;
+    --purple-light: #9B59B6;
+    --purple-dark: #8E44AD;
+    --black-light: #34495e;
+    --black-dark: #2c3e50;
+    --yellow-light: #F1C40F;
+    --yellow-dark: #F39C12;
+    --orange-light: #E67E22;
+    --orange-dark: #D35400;
+    --red-light: #E74C3C;
+    --red-dark: #C0392B;
     --white-light: #ecf0f1;
     --white-dark: #bdc3c7;
     --grey-light: #95a5a6;
@@ -20,61 +30,111 @@ body {
     background-color: var(--black-dark);
 }
 
-#main {
+main {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
     justify-content: center;
-}
-
-.locations {
+    gap: 5em;
     color: var(--white-light);
 }
 
-.locations .location {
-    display: grid;
-    grid-template-columns: auto repeat(26, 3%);
-    background-color: var(--black-light);
-    margin: 0.5em 0;
+a {
+    color: inherit;
 }
 
-.locations .location div {
-    color: var(--light);
+header, footer {
+    text-align: center;
+}
+
+.timezones {
+    background-color: var(--black-light);
+
+
+    display: grid;
+    grid-template-columns: 6fr repeat(24, 1fr);
+    grid-auto-flow: column;
+}
+
+.timezones .locations,
+.timezones .time {
+    display: contents;
+}
+
+.timezones .locations .location,
+.timezones .time .localtime {
+    padding: 1em 0;
+}
+
+.timezones .locations .location .description,
+.timezones .time .localtime {
     text-align: center;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
     justify-content: center;
-    padding: 0.4em 0;
 }
 
-.locations .location .timezone {
+.timezones .location {
+    grid-column: 1;
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr;
+}
+
+.timezones .location .description .name {
     font-weight: bold;
-    overflow: hidden;
-    word-wrap: break-word;
 }
 
-.locations .location .dst {
+.timezones .location .description .date {
+    color: var(--white-dark);
+}
+
+.timezones .location .dst[inDST="false"] {
     color: var(--grey-dark);
 }
 
-.locations .location .dst.inDST {
+.timezones .location .dst[inDST="true"] {
     color: var(--white-light);
 }
 
-.locations .location .time.asleep {
+.timezones .localtime {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.timezones .localtime .ampm {
+    color: var(--white-dark);
+}
+
+.timezones .localtime[asleep="true"] {
     background-color: var(--blue-dark);
 }
 
-.locations .location .time.awake {
+.timezones .localtime[asleep="false"] {
     background-color: var(--blue-light);
 }
 
-.locations .location .time.highlight {
-    border-left: 2px solid var(--white-light);
-    border-right: 2px solid var(--white-light);
+.timezones .time.now .localtime[asleep="true"] {
+    background-color: var(--purple-dark);
 }
 
-.locations .location .time .ampm {
-    color: var(--white-dark);
+.timezones .time.now .localtime[asleep="false"] {
+    background-color: var(--purple-light);
+}
+
+.timezones .time:hover .localtime[asleep="true"] {
+    background-color: var(--orange-dark);
+}
+
+.timezones .time:hover .localtime[asleep="false"] {
+    background-color: var(--orange-light);
+}
+
+.timezones .time:target .localtime[asleep="true"] {
+    background-color: var(--red-dark);
+}
+
+.timezones .time:target .localtime[asleep="false"] {
+    background-color: var(--red-light);
 }
