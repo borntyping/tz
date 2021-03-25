@@ -28,6 +28,8 @@ class TimeCell {
 
 class TimeColumn {
     constructor(time, timezones) {
+
+        console.log(timezones);
         this.time = time;
         this.localtimes = timezones.map(timezone => new TimeCell(time, timezone))
         this.el = redom.html(`div.time#${time}`, [].concat(this.localtimes));
@@ -42,51 +44,59 @@ class TimeColumn {
 }
 
 
+class Location {
+    constructor(displayName, timezoneName) {
+        this.displayName = displayName;
+        this.timezoneName = timezoneName;
+    }
+}
+
+
 class LocationCell {
-    constructor(timezone) {
-        this.timezone = timezone;
+    constructor(location) {
+        this.location = location;
 
-        this.name = redom.html("span.name");
+        this.name = redom.html("div.name");
         this.date = redom.html("span.date");
-        this.offset = redom.html("span.offset")
-        this.dst = redom.html("span.dst")
+        this.offset = redom.html("span.hide.offset")
+        this.dst = redom.html("span.hide.dst")
 
-        this.el = redom.html("div.location", [
-            redom.html("div.description", [this.name, this.date]),
-            redom.html("div", this.offset),
-            redom.html("div", this.dst),
-        ]);
+        this.meta = redom.html("div.meta", [
+            this.date,
+            redom.html("span", [this.dst, " ", this.offset]),
+        ])
+        this.el = redom.html("div.location", [this.name, this.meta]);
     }
 
     update(utc) {
-        var local = utc.goto(this.timezone);
+        var local = utc.goto(this.location.timezoneName);
         var timezone = local.timezone();
 
-        this.name.textContent = `${timezone.name}`;
+        this.name.textContent = this.location.displayName;
         this.date.textContent = `${local.format("day")} ${local.format("date-ordinal")} ${local.format("month")}`;
-        this.offset.textContent = `${timezone.current.offset >= 0 ? '+' : '-'}${Math.abs(timezone.current.offset)}`;
-        this.dst.textContent = `${local.hasDST() ? "DST" : ""}`
+        this.offset.textContent = `UTC${timezone.current.offset >= 0 ? '+' : '-'}${Math.abs(timezone.current.offset)}`;
+        this.dst.textContent = local.hasDST() ? "DST" : "---";
 
-        redom.setAttr(this.dst, { "inDST": local.inDST(), hasDST: local.hasDST() });
+        redom.setAttr(this.dst, { inDST: local.inDST(), hasDST: local.hasDST() });
     }
 
 }
 
 class LocationColumn {
-    constructor(timezones) {
-        this.locations = timezones.map(t => new LocationCell(t));
-        this.el = redom.html("div.locations", this.locations);
+    constructor(locations) {
+        this.cells = locations.map(l => new LocationCell(l));
+        this.el = redom.html("div.locations", this.cells);
     }
 
     update(utc) {
-        this.locations.forEach(l => l.update(utc));
+        this.cells.forEach(l => l.update(utc));
     }
 }
 
-class Timezones {
-    constructor(timezones) {
-        this.locations = new LocationColumn(timezones);
-        this.times = times.map(t => new TimeColumn(t, timezones));
+class Locations {
+    constructor(locations) {
+        this.locations = new LocationColumn(locations);
+        this.times = times.map(t => new TimeColumn(t, locations.map(t => t.timezoneName)));
         this.el = redom.html("div.timezones", [this.locations].concat(this.times));
     }
 
@@ -118,15 +128,16 @@ class Timezones {
 }
 
 window.onload = function onload() {
-    const timezones = new Timezones([
-        "Canada/Central",
-        "America/New_York",
-        "Europe/London",
-        "Etc/UTC",
-        "Europe/Berlin",
-        "Australia/Sydney",
+    const locations = new Locations([
+        new Location("Ontario, Canada", "Canada/Central"),
+        new Location("Boston, U.S.A", "America/New_York"),
+
+        new Location("Reading, England", "Europe/London"),
+        new Location("Amsterdam, Netherlands", "Europe/Amsterdam"),
+        new Location("Munich, Germany", "Europe/Berlin"),
+        new Location("Sydney, Australia", "Australia/Sydney"),
     ])
 
-    timezones.install(document.getElementById("main"));
-    timezones.refresh()
+    locations.install(document.getElementById("main"));
+    locations.refresh()
 };

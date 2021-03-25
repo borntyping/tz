@@ -64,11 +64,6 @@ header, footer {
 
 .timezones .locations .location,
 .timezones .time .localtime {
-    padding: 1em 0;
-}
-
-.timezones .locations .location > div,
-.timezones .time .localtime {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -77,48 +72,46 @@ header, footer {
 
 .timezones .location {
     grid-column: 1;
-    display: grid;
-    grid-template-columns: 3fr 1fr 1fr;
+    padding: 0 1em;
 }
 
-.timezones .location .description {
-    text-align: left;
-    padding-left: 1em;
-}
-
-.timezones .location .description .name {
+.timezones .location .name {
     font-weight: bold;
 }
 
-.timezones .location .description .date {
+.timezones .location .date {
     color: var(--white-dark);
 }
 
-.timezones .location .offset,
-.timezones .location .dst {
-    text-align: center;
-    opacity: 0;
+.timezones .location .meta {
+    color: var(--white-dark);
 
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+
+.timezones .locations .hide {
+    opacity: 0;
     transition-property: opacity;
     transition-duration: 0.5s;
     transition-delay: 0.1s;
 }
 
-.timezones .locations:hover .offset,
-.timezones .locations:hover .dst {
-    text-align: center;
+.timezones .locations:hover .hide {
     opacity: 1;
 }
 
 .timezones .location .dst[inDST="false"] {
-    color: var(--grey-dark);
+    color: var(--black-dark);
 }
 
-.timezones .location .dst[inDST="true"] {
-    color: var(--white-light);
+.timezones .location .dst[hasDST="false"] {
+    display: none;
 }
 
 .timezones .localtime {
+    padding: 1em 0;
     display: block;
     text-decoration: none;
     color: inherit;
