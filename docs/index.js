@@ -1,6 +1,6 @@
 const times = ["12:00am", "01:00am", "02:00am", "03:00am", "04:00am", "05:00am", "06:00am", "07:00am", "08:00am", "09:00am", "10:00am", "11:00am", "12:00pm", "01:00pm", "02:00pm", "03:00pm", "04:00pm", "05:00pm", "06:00pm", "07:00pm", "08:00pm", "09:00pm", "10:00pm", "11:00pm"];
 
-class LocalTime {
+class TimeCell {
     constructor(time, timezone) {
         this.time = time;
         this.timezone = timezone;
@@ -22,14 +22,14 @@ class LocalTime {
 
         var hour = local.hour();
         this.hour.textContent = hour == 0 ? 12 : (hour <= 12 ? hour : hour - 12);
-        this.ampm.textContent = hour >= 12 ? "p.m." : "a.m.";
+        this.ampm.textContent = hour >= 12 ? "pm" : "am";
     }
 }
 
 class TimeColumn {
     constructor(time, timezones) {
         this.time = time;
-        this.localtimes = timezones.map(timezone => new LocalTime(time, timezone))
+        this.localtimes = timezones.map(timezone => new TimeCell(time, timezone))
         this.el = redom.html(`div.time#${time}`, [].concat(this.localtimes));
     }
 
@@ -42,16 +42,20 @@ class TimeColumn {
 }
 
 
-class Location {
+class LocationCell {
     constructor(timezone) {
         this.timezone = timezone;
 
-        this.name = redom.html("div.name");
-        this.date = redom.html("div.date");
-        this.offset = redom.html("div.offset")
-        this.dst = redom.html("div.dst")
+        this.name = redom.html("span.name");
+        this.date = redom.html("span.date");
+        this.offset = redom.html("span.offset")
+        this.dst = redom.html("span.dst")
 
-        this.el = redom.html("div.location", [redom.html("div.description", [this.name, this.date]), this.offset, this.dst]);
+        this.el = redom.html("div.location", [
+            redom.html("div.description", [this.name, this.date]),
+            redom.html("div", this.offset),
+            redom.html("div", this.dst),
+        ]);
     }
 
     update(utc) {
@@ -70,7 +74,7 @@ class Location {
 
 class LocationColumn {
     constructor(timezones) {
-        this.locations = timezones.map(t => new Location(t));
+        this.locations = timezones.map(t => new LocationCell(t));
         this.el = redom.html("div.locations", this.locations);
     }
 
@@ -124,5 +128,5 @@ window.onload = function onload() {
     ])
 
     timezones.install(document.getElementById("main"));
-    timezones.refresh_development()
+    timezones.refresh()
 };
