@@ -130,6 +130,15 @@ header, footer {
     background-color: var(--blue-light);
 }
 
+.timezones .localtime[same-day-as-here="false"] {
+    background-color: var(--black-light);
+}
+
+/* .timezones .localtime[local-hour="0"],
+.timezones .localtime[local-hour="12"] {
+    border-right: 3px solid var(--white-light);
+} */
+
 .timezones .time.now .localtime[asleep="true"] {
     background-color: var(--purple-dark);
 }

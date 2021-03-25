@@ -16,6 +16,10 @@ class TimeCell {
         var local = here.goto(this.timezone);
 
         redom.setAttr(this.el, {
+            "here": here.time(),
+            "same-day-as-here": here.day() == local.day(),
+            "local": local.time(),
+            "local-hour": local.hour(),
             "asleep": local.isAsleep(),
             "now": utc.hour() === here.hour(),
         });
