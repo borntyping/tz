@@ -1,0 +1,80 @@
+html, body, #main {
+    height: 100%;
+}
+
+body {
+    font-family: Helvetica, sans-serif;
+    font-family: 'Trebuchet MS', sans-serif;
+
+    --purple-dark: #8e44ad;
+    --purple-light: #9b59b6;
+    --black-dark: #2c3e50;
+    --black-light:#34495e;
+    --blue-dark: #2980b9;
+    --blue-light: #3498db;
+    --white-light: #ecf0f1;
+    --white-dark: #bdc3c7;
+    --grey-light: #95a5a6;
+    --grey-dark: #7f8c8d;
+
+    background-color: var(--black-dark);
+}
+
+#main {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+.locations {
+    color: var(--white-light);
+}
+
+.locations .location {
+    display: grid;
+    grid-template-columns: auto repeat(26, 3%);
+    background-color: var(--black-light);
+    margin: 0.5em 0;
+}
+
+.locations .location div {
+    color: var(--light);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    padding: 0.4em 0;
+}
+
+.locations .location .timezone {
+    font-weight: bold;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
+.locations .location .dst {
+    color: var(--grey-dark);
+}
+
+.locations .location .dst.inDST {
+    color: var(--white-light);
+}
+
+.locations .location .time.asleep {
+    background-color: var(--blue-dark);
+}
+
+.locations .location .time.awake {
+    background-color: var(--blue-light);
+}
+
+.locations .location .time.highlight {
+    border-left: 2px solid var(--white-light);
+    border-right: 2px solid var(--white-light);
+}
+
+.locations .location .time .ampm {
+    color: var(--white-dark);
+}
