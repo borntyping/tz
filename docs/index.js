@@ -32,8 +32,6 @@ class TimeCell {
 
 class TimeColumn {
     constructor(time, timezones) {
-
-        console.log(timezones);
         this.time = time;
         this.localtimes = timezones.map(timezone => new TimeCell(time, timezone))
         this.el = redom.html(`div.time#${time}`, [].concat(this.localtimes));
@@ -55,8 +53,7 @@ class Location {
     }
 }
 
-
-class LocationCell {
+class Header {
     constructor(location) {
         this.location = location;
 
@@ -86,10 +83,10 @@ class LocationCell {
 
 }
 
-class LocationColumn {
+class HeaderColumn {
     constructor(locations) {
-        this.cells = locations.map(l => new LocationCell(l));
-        this.el = redom.html("div.locations", this.cells);
+        this.cells = locations.map(l => new Header(l));
+        this.el = redom.html("div.headers", this.cells);
     }
 
     update(utc) {
@@ -98,19 +95,37 @@ class LocationColumn {
 }
 
 class Locations {
-    constructor(locations) {
-        this.locations = new LocationColumn(locations);
+    constructor(name, locations) {
+        this.name = name;
+        this.locations = new HeaderColumn(locations);
         this.times = times.map(t => new TimeColumn(t, locations.map(t => t.timezoneName)));
-        this.el = redom.html("div.timezones", [this.locations].concat(this.times));
+
+        this.el = redom.html("div.locations", [
+            redom.html("div.title", redom.html("h1", this.name)),
+            redom.html("div.timezones", [this.locations].concat(this.times))
+        ]);
     }
 
     update(utc) {
         this.locations.update(utc);
         this.times.forEach(t => t.update(utc));
     }
+}
 
-    install() {
-        redom.mount(document.getElementById("timezones"), this);
+class Main {
+    constructor(locations) {
+        this.locations = locations;
+        this.el = redom.html("div", this.locations.concat(
+            redom.html("footer", redom.html("a", { href: "#" }, "Reset"))
+        ));
+    }
+
+    update(utc) {
+        this.locations.forEach(l => l.update(utc));
+    }
+
+    install(element) {
+        redom.mount(element, this);
         this.update(this.now());
     }
 
@@ -132,16 +147,17 @@ class Locations {
 }
 
 window.onload = function onload() {
-    const locations = new Locations([
-        new Location("Ontario, Canada", "Canada/Central"),
-        new Location("Boston, U.S.A", "America/New_York"),
-
-        new Location("Reading, England", "Europe/London"),
-        new Location("Amsterdam, Netherlands", "Europe/Amsterdam"),
-        new Location("Munich, Germany", "Europe/Berlin"),
-        new Location("Sydney, Australia", "Australia/Sydney"),
+    const main = new Main([
+        new Locations("Timezones", [
+            new Location("Ontario, Canada", "Canada/Central"),
+            new Location("Boston, U.S.A", "America/New_York"),
+            new Location("Reading, England", "Europe/London"),
+            new Location("Amsterdam, Netherlands", "Europe/Amsterdam"),
+            new Location("Munich, Germany", "Europe/Berlin"),
+            new Location("Sydney, Australia", "Australia/Sydney"),
+        ])
     ])
 
-    locations.install(document.getElementById("main"));
-    locations.refresh()
+    main.install(document.getElementById("main"));
+    main.refresh()
 };
