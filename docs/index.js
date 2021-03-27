@@ -1,19 +1,27 @@
 const times = ["12:00am", "01:00am", "02:00am", "03:00am", "04:00am", "05:00am", "06:00am", "07:00am", "08:00am", "09:00am", "10:00am", "11:00am", "12:00pm", "01:00pm", "02:00pm", "03:00pm", "04:00pm", "05:00pm", "06:00pm", "07:00pm", "08:00pm", "09:00pm", "10:00pm", "11:00pm"];
 
+class Location {
+    constructor(displayName, timezoneName, className) {
+        this.displayName = displayName;
+        this.timezoneName = timezoneName;
+        this.className = className;
+    }
+}
+
 class TimeCell {
-    constructor(time, timezone) {
+    constructor(time, location) {
         this.time = time;
-        this.timezone = timezone;
+        this.location = location;
 
         this.hour = redom.html("span.hour");
         this.ampm = redom.html("span.ampm");
 
-        this.el = redom.html("a.localtime", { href: `#${this.time}` }, [this.hour, this.ampm]);
+        this.el = redom.html("a.localtime", { href: `#${this.time}`, class: this.location.className }, [this.hour, this.ampm]);
     }
 
     update(utc) {
         var here = utc.time(this.time);
-        var local = here.goto(this.timezone);
+        var local = here.goto(this.location.timezoneName);
 
         redom.setAttr(this.el, {
             "here": here.time(),
@@ -31,9 +39,9 @@ class TimeCell {
 }
 
 class TimeColumn {
-    constructor(time, timezones) {
+    constructor(time, locations) {
         this.time = time;
-        this.localtimes = timezones.map(timezone => new TimeCell(time, timezone))
+        this.localtimes = locations.map(location => new TimeCell(time, location))
         this.el = redom.html(`div.time#${time}`, [].concat(this.localtimes));
     }
 
@@ -42,14 +50,6 @@ class TimeColumn {
         this.el.className = `time ${isNow ? "now" : ""}`
 
         this.localtimes.forEach(l => l.update(utc));
-    }
-}
-
-
-class Location {
-    constructor(displayName, timezoneName) {
-        this.displayName = displayName;
-        this.timezoneName = timezoneName;
     }
 }
 
@@ -66,7 +66,7 @@ class Header {
             this.date,
             redom.html("span", [this.dst, " ", this.offset]),
         ])
-        this.el = redom.html("div.location", [this.name, this.meta]);
+        this.el = redom.html("div.location", { "class": this.location.className }, [this.name, this.meta]);
     }
 
     update(utc) {
@@ -98,7 +98,7 @@ class Locations {
     constructor(name, locations) {
         this.name = name;
         this.locations = new HeaderColumn(locations);
-        this.times = times.map(t => new TimeColumn(t, locations.map(t => t.timezoneName)));
+        this.times = times.map(t => new TimeColumn(t, locations));
 
         this.el = redom.html("div.locations", [
             redom.html("div.title", redom.html("h1", this.name)),
@@ -150,8 +150,9 @@ window.onload = function onload() {
     const main = new Main([
         new Locations("Timezones", [
             new Location("Ontario, Canada", "Canada/Central"),
-            new Location("Boston, U.S.A", "America/New_York"),
-            new Location("Reading, England", "Europe/London"),
+            new Location("Boston, U.S.A.", "America/New_York"),
+            new Location("Connecticut, U.S.A.", "America/New_York"),
+            new Location("Reading, England", "Europe/London", "highlight"),
             new Location("Amsterdam, Netherlands", "Europe/Amsterdam"),
             new Location("Munich, Germany", "Europe/Berlin"),
             new Location("Sydney, Australia", "Australia/Sydney"),

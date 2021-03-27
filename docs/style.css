@@ -79,10 +79,17 @@ header, footer {
     justify-content: center;
 }
 
+.timezones .headers .location.highlight,
+.timezones .time .localtime.highlight {
+    border-top: 2px solid var(--white-light);
+    border-bottom: 2px solid var(--white-light);
+}
+
 .timezones .location {
     grid-column: 1;
     padding: 0 1em;
 }
+
 
 .timezones .location .name {
     font-weight: bold;
