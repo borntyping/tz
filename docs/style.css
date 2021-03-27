@@ -29,6 +29,8 @@ body {
     --grey-light: #95a5a6;
     --grey-dark: #7f8c8d;
 
+    --border: 2px solid var(--white-light);
+
     background-color: var(--black-dark);
 }
 
@@ -81,8 +83,8 @@ header, footer {
 
 .timezones .headers .location.highlight,
 .timezones .time .localtime.highlight {
-    border-top: 2px solid var(--white-light);
-    border-bottom: 2px solid var(--white-light);
+    border-top: var(--border);
+    border-bottom: var(--border);
 }
 
 .timezones .location {
@@ -150,10 +152,10 @@ header, footer {
     background-color: var(--black-light);
 }
 
-/* .timezones .localtime[local-hour="0"],
-.timezones .localtime[local-hour="12"] {
-    border-right: 3px solid var(--white-light);
-} */
+.timezones .time.now .localtime {
+    border-left: var(--border);
+    border-right: var(--border);
+}
 
 .timezones .time.now .localtime[asleep="true"] {
     background-color: var(--purple-dark);
