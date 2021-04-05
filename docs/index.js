@@ -27,7 +27,8 @@ class TimeCell {
 
         redom.setAttr(this.el, {
             "same-day-as-here": utcDateTime.day === localDateTime.day,
-            "asleep": localDateTime.hour <= 8 || localDateTime.hour >= 18,
+            "office-hours": 9 <= localDateTime.hour && localDateTime.hour <= 18,
+            "night-hours": 5 >= localDateTime.hour || localDateTime.hour >= 22,
             "now": utcDateTime.hour === cellDateTime.hour,
         });
 
