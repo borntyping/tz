@@ -1,4 +1,4 @@
-class Location {
+class Timezone {
     displayName;
     timezoneName;
     className;
@@ -62,15 +62,19 @@ class Header {
         this.location = location;
 
         this.name = redom.html("div.name");
-        this.offset = redom.html("span.offset")
+        this.offsetLong = redom.html("span")
+        this.offsetShort = redom.html("span")
 
-        this.meta = redom.html("div.meta", [this.offset]);
+        this.meta = redom.html("div.meta", [this.offsetLong]);
         this.el = redom.html("div.location", { "class": this.location.className }, [this.name, this.meta]);
     }
 
     update(utcDateTime) {
+        const tzDateTime = utcDateTime.setZone(this.location.timezoneName);
+
         this.name.textContent = this.location.displayName;
-        this.offset.textContent = utcDateTime.setZone(this.location.timezoneName).offsetNameShort;
+        this.offsetLong.textContent = tzDateTime.offsetNameLong;
+        this.offsetShort.textContent = tzDateTime.offsetNameShort;
     }
 
 }
@@ -88,7 +92,7 @@ class HeaderColumn {
     }
 }
 
-class Locations {
+class TimezoneList {
     el;
 
     constructor(name, times, locations) {
@@ -145,19 +149,19 @@ window.onload = function onload() {
     const times = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 
     const main = new Main([
-        new Locations("Locations", times, [
-            new Location("Ontario, Canada", "Canada/Central"),
-            new Location("Boston, U.S.A.", "America/New_York"),
-            new Location("Connecticut, U.S.A.", "America/New_York"),
-            new Location("Reading, England", "Europe/London", "highlight"),
-            new Location("Amsterdam, Netherlands", "Europe/Amsterdam"),
-            new Location("Munich, Germany", "Europe/Berlin"),
-            new Location("Sydney, Australia", "Australia/Sydney"),
+        new TimezoneList("Timezones", times, [
+            new Timezone("Eastern Time", "America/New_York"),
+            new Timezone("British Time", "Europe/London"),
         ]),
-        new Locations("Timezones", times, [
-            new Location("EST", "EST"),
-            new Location("GMT", "GMT"),
-        ])
+        new TimezoneList("Locations", times, [
+            new Timezone("Ontario, Canada", "Canada/Central"),
+            new Timezone("Boston, U.S.A.", "America/New_York"),
+            new Timezone("Connecticut, U.S.A.", "America/New_York"),
+            new Timezone("Reading, England", "Europe/London", "highlight"),
+            new Timezone("Amsterdam, Netherlands", "Europe/Amsterdam"),
+            new Timezone("Munich, Germany", "Europe/Berlin"),
+            new Timezone("Sydney, Australia", "Australia/Sydney"),
+        ]),
     ]);
 
     main.install(document.getElementById("main"));
