@@ -1,6 +1,8 @@
-const times = ["12:00am", "01:00am", "02:00am", "03:00am", "04:00am", "05:00am", "06:00am", "07:00am", "08:00am", "09:00am", "10:00am", "11:00am", "12:00pm", "01:00pm", "02:00pm", "03:00pm", "04:00pm", "05:00pm", "06:00pm", "07:00pm", "08:00pm", "09:00pm", "10:00pm", "11:00pm"];
-
 class Location {
+    displayName;
+    timezoneName;
+    className;
+
     constructor(displayName, timezoneName, className) {
         this.displayName = displayName;
         this.timezoneName = timezoneName;
@@ -9,81 +11,73 @@ class Location {
 }
 
 class TimeCell {
-    constructor(time, location) {
-        this.time = time;
+    el;
+
+    constructor(hour, location) {
+        this.hour = hour;
         this.location = location;
 
-        this.hour = redom.html("span.hour");
-        this.ampm = redom.html("span.ampm");
+        this.hourSpan = redom.html("span.hour");
+        this.ampmSpan = redom.html("span.ampm");
 
-        this.el = redom.html("a.localtime", { href: `#${this.time}`, class: this.location.className }, [this.hour, this.ampm]);
+        this.el = redom.html("a.localtime", { href: `#${this.hour}`, class: this.location.className }, [this.hourSpan, this.ampmSpan]);
     }
 
-    update(utc) {
-        var here = utc.time(this.time);
-        var local = here.goto(this.location.timezoneName);
+    update(utcDateTime) {
+        const localDateTime = utcDateTime.set({ hour: this.hour }).setZone(this.location.timezoneName);
 
         redom.setAttr(this.el, {
-            "here": here.time(),
-            "same-day-as-here": here.day() == local.day(),
-            "local": local.time(),
-            "local-hour": local.hour(),
-            "asleep": local.isAsleep(),
-            "now": utc.hour() === here.hour(),
+            "same-day-as-here": utcDateTime.day === localDateTime.day,
+            "asleep": localDateTime.hour <= 8 || localDateTime.hour >= 18,
+            "now": utcDateTime.hour === localDateTime.hour,
         });
 
-        var hour = local.hour();
-        this.hour.textContent = hour == 0 ? 12 : (hour <= 12 ? hour : hour - 12);
-        this.ampm.textContent = hour >= 12 ? "pm" : "am";
+        this.hourSpan.textContent = localDateTime.hour === 0 ? 12 : (localDateTime.hour <= 12 ? localDateTime.hour : localDateTime.hour - 12);
+        this.ampmSpan.textContent = localDateTime.hour >= 12 ? "pm" : "am";
     }
 }
 
 class TimeColumn {
-    constructor(time, locations) {
-        this.time = time;
-        this.localtimes = locations.map(location => new TimeCell(time, location))
-        this.el = redom.html(`div.time#${time}`, [].concat(this.localtimes));
+    el;
+
+    constructor(hour, locations) {
+        this.hour = hour;
+        this.localtimes = locations.map(location => new TimeCell(hour, location))
+        this.el = redom.html(`div.time#${hour}`, [].concat(this.localtimes));
     }
 
-    update(utc) {
-        var isNow = utc.hour() === utc.time(this.time).hour();
+    update(utcDateTime) {
+        const isNow = utcDateTime.hour === this.hour;
+
         this.el.className = `time ${isNow ? "now" : ""}`
 
-        this.localtimes.forEach(l => l.update(utc));
+        this.localtimes.forEach(l => l.update(utcDateTime));
     }
 }
 
 class Header {
+    el;
+
     constructor(location) {
         this.location = location;
 
         this.name = redom.html("div.name");
-        this.date = redom.html("span.date");
-        this.offset = redom.html("span.hide.offset")
-        this.dst = redom.html("span.hide.dst")
+        this.offset = redom.html("span.offset")
 
-        this.meta = redom.html("div.meta", [
-            this.date,
-            redom.html("span", [this.dst, " ", this.offset]),
-        ])
+        this.meta = redom.html("div.meta", [this.offset]);
         this.el = redom.html("div.location", { "class": this.location.className }, [this.name, this.meta]);
     }
 
-    update(utc) {
-        var local = utc.goto(this.location.timezoneName);
-        var timezone = local.timezone();
-
+    update(utcDateTime) {
         this.name.textContent = this.location.displayName;
-        this.date.textContent = `${local.format("day")} ${local.format("date-ordinal")} ${local.format("month")}`;
-        this.offset.textContent = `UTC${timezone.current.offset >= 0 ? '+' : '-'}${Math.abs(timezone.current.offset)}`;
-        this.dst.textContent = local.hasDST() ? "DST" : "---";
-
-        redom.setAttr(this.dst, { inDST: local.inDST(), hasDST: local.hasDST() });
+        this.offset.textContent = utcDateTime.setZone(this.location.timezoneName).offsetNameShort;
     }
 
 }
 
 class HeaderColumn {
+    el;
+
     constructor(locations) {
         this.cells = locations.map(l => new Header(l));
         this.el = redom.html("div.headers", this.cells);
@@ -95,14 +89,16 @@ class HeaderColumn {
 }
 
 class Locations {
-    constructor(name, locations) {
+    el;
+
+    constructor(name, times, locations) {
         this.name = name;
         this.locations = new HeaderColumn(locations);
         this.times = times.map(t => new TimeColumn(t, locations));
 
         this.el = redom.html("div.locations", [
             redom.html("div.title", redom.html("h1", this.name)),
-            redom.html("div.timezones", [this.locations].concat(this.times))
+            redom.html("div.timezones", [].concat([this.locations]).concat(this.times))
         ]);
     }
 
@@ -113,11 +109,13 @@ class Locations {
 }
 
 class Main {
+    el;
+
     constructor(locations) {
+        const footer = redom.html("footer", redom.html("a", { href: "#" }, "Reset"));
+
         this.locations = locations;
-        this.el = redom.html("div", this.locations.concat(
-            redom.html("footer", redom.html("a", { href: "#" }, "Reset"))
-        ));
+        this.el = redom.html("div", this.locations.concat(footer));
     }
 
     update(utc) {
@@ -126,29 +124,28 @@ class Main {
 
     install(element) {
         redom.mount(element, this);
-        this.update(this.now());
+        this.update(luxon.DateTime.utc());
     }
 
     refresh() {
-        window.setInterval(() => this.update(this.now()), 5000);
+        window.setInterval(() => this.update(luxon.DateTime.utc()), 5000);
     }
 
     refresh_development() {
-        var now = this.now();
+        let now = luxon.DateTime.utc();
+
         window.setInterval(() => {
-            now = now.next('hour');
+            now = now.plus({ hours: 1 });
             this.update(now);
         }, 1000);
-    }
-
-    now() {
-        return spacetime.now("Etc/UTC");
     }
 }
 
 window.onload = function onload() {
+    const times = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+
     const main = new Main([
-        new Locations("Timezones", [
+        new Locations("Locations", times, [
             new Location("Ontario, Canada", "Canada/Central"),
             new Location("Boston, U.S.A.", "America/New_York"),
             new Location("Connecticut, U.S.A.", "America/New_York"),
@@ -156,9 +153,13 @@ window.onload = function onload() {
             new Location("Amsterdam, Netherlands", "Europe/Amsterdam"),
             new Location("Munich, Germany", "Europe/Berlin"),
             new Location("Sydney, Australia", "Australia/Sydney"),
+        ]),
+        new Locations("Timezones", times, [
+            new Location("EST", "EST"),
+            new Location("GMT", "GMT"),
         ])
-    ])
+    ]);
 
     main.install(document.getElementById("main"));
-    main.refresh()
+    main.refresh();
 };
