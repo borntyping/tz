@@ -24,12 +24,13 @@ class TimeCell {
     }
 
     update(utcDateTime) {
-        const localDateTime = utcDateTime.set({ hour: this.hour }).setZone(this.location.timezoneName);
+        const cellDateTime = utcDateTime.plus({ hour: this.hour });
+        const localDateTime = cellDateTime.setZone(this.location.timezoneName);
 
         redom.setAttr(this.el, {
             "same-day-as-here": utcDateTime.day === localDateTime.day,
             "asleep": localDateTime.hour <= 8 || localDateTime.hour >= 18,
-            "now": utcDateTime.hour === localDateTime.hour,
+            "now": utcDateTime.hour === cellDateTime.hour,
         });
 
         this.hourSpan.textContent = localDateTime.hour === 0 ? 12 : (localDateTime.hour <= 12 ? localDateTime.hour : localDateTime.hour - 12);
@@ -47,9 +48,9 @@ class TimeColumn {
     }
 
     update(utcDateTime) {
-        const isNow = utcDateTime.hour === this.hour;
-
-        this.el.className = `time ${isNow ? "now" : ""}`
+        // const isNow = utcDateTime.hour === this.hour;
+        //
+        // this.el.className = `time ${isNow ? "now" : ""}`
 
         this.localtimes.forEach(l => l.update(utcDateTime));
     }
@@ -95,10 +96,12 @@ class HeaderColumn {
 class TimezoneList {
     el;
 
-    constructor(name, times, locations) {
+    constructor(name, locations) {
+        const hours = Array(25).fill(25).map((x, y) => (y - 12));
+
         this.name = name;
         this.locations = new HeaderColumn(locations);
-        this.times = times.map(t => new TimeColumn(t, locations));
+        this.times = hours.map(h => new TimeColumn(h, locations));
 
         this.el = redom.html("div.locations", [
             redom.html("div.title", redom.html("h1", this.name)),
@@ -146,14 +149,12 @@ class Main {
 }
 
 window.onload = function onload() {
-    const times = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
-
     const main = new Main([
-        new TimezoneList("Timezones", times, [
+        new TimezoneList("Timezones", [
             new Timezone("Eastern Time", "America/New_York"),
             new Timezone("British Time", "Europe/London"),
         ]),
-        new TimezoneList("Locations", times, [
+        new TimezoneList("Locations", [
             new Timezone("Ontario, Canada", "Canada/Central"),
             new Timezone("Boston, U.S.A.", "America/New_York"),
             new Timezone("Connecticut, U.S.A.", "America/New_York"),
