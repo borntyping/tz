@@ -42,16 +42,11 @@ class TimeColumn {
     el;
 
     constructor(hour, locations) {
-        this.hour = hour;
         this.localtimes = locations.map(location => new TimeCell(hour, location))
         this.el = redom.html("div.time", [].concat(this.localtimes));
     }
 
     update(utcDateTime) {
-        // const isNow = utcDateTime.hour === this.hour;
-        //
-        // this.el.className = `time ${isNow ? "now" : ""}`
-
         this.localtimes.forEach(l => l.update(utcDateTime));
     }
 }
