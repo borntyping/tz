@@ -168,14 +168,6 @@ header, footer {
     background-color: var(--orange-light);
 }
 
-.timezones .time:target .localtime[asleep="true"] {
-    background-color: var(--red-dark);
-}
-
-.timezones .time:target .localtime[asleep="false"] {
-    background-color: var(--red-light);
-}
-
 footer {
     color: var(--grey-dark);
 }

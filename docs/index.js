@@ -20,7 +20,7 @@ class TimeCell {
         this.hourSpan = redom.html("span.hour");
         this.ampmSpan = redom.html("span.ampm");
 
-        this.el = redom.html("a.localtime", { href: `#${this.hour}`, class: this.location.className }, [this.hourSpan, this.ampmSpan]);
+        this.el = redom.html("span.localtime", { class: this.location.className }, [this.hourSpan, this.ampmSpan]);
     }
 
     update(utcDateTime) {
@@ -44,7 +44,7 @@ class TimeColumn {
     constructor(hour, locations) {
         this.hour = hour;
         this.localtimes = locations.map(location => new TimeCell(hour, location))
-        this.el = redom.html(`div.time#${hour}`, [].concat(this.localtimes));
+        this.el = redom.html("div.time", [].concat(this.localtimes));
     }
 
     update(utcDateTime) {
