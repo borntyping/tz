@@ -80,12 +80,6 @@ header, footer {
     justify-content: center;
 }
 
-.timezones .headers .location.highlight,
-.timezones .time .localtime.highlight {
-    border-top: var(--border);
-    border-bottom: var(--border);
-}
-
 .timezones .location {
     grid-column: 1;
     padding: 0 1em;
@@ -145,11 +139,6 @@ header, footer {
 
 .timezones .localtime[same-day-as-here="false"] {
     background-color: var(--black-light);
-}
-
-.timezones .time .localtime[now="true"] {
-    border-left: var(--border);
-    border-right: var(--border);
 }
 
 .timezones .time .localtime[now="true"][asleep="true"] {

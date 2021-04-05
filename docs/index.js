@@ -1,12 +1,10 @@
 class Timezone {
     displayName;
     timezoneName;
-    className;
 
-    constructor(displayName, timezoneName, className) {
+    constructor(displayName, timezoneName) {
         this.displayName = displayName;
         this.timezoneName = timezoneName;
-        this.className = className;
     }
 }
 
@@ -20,7 +18,7 @@ class TimeCell {
         this.hourSpan = redom.html("span.hour");
         this.ampmSpan = redom.html("span.ampm");
 
-        this.el = redom.html("span.localtime", { class: this.location.className }, [this.hourSpan, this.ampmSpan]);
+        this.el = redom.html("span.localtime", [this.hourSpan, this.ampmSpan]);
     }
 
     update(utcDateTime) {
@@ -154,7 +152,7 @@ window.onload = function onload() {
             new Timezone("Ontario, Canada", "Canada/Central"),
             new Timezone("Boston, U.S.A.", "America/New_York"),
             new Timezone("Connecticut, U.S.A.", "America/New_York"),
-            new Timezone("Reading, England", "Europe/London", "highlight"),
+            new Timezone("Reading, England", "Europe/London"),
             new Timezone("Amsterdam, Netherlands", "Europe/Amsterdam"),
             new Timezone("Munich, Germany", "Europe/Berlin"),
             new Timezone("Sydney, Australia", "Australia/Sydney"),
