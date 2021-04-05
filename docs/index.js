@@ -97,7 +97,8 @@ class TimezoneList {
     el;
 
     constructor(name, locations) {
-        const hours = Array(25).fill(25).map((x, y) => (y - 12));
+        // Generate a list of hour offsets such that the current time is in the middle of the UI.
+        const hours = Array(25).fill(25).map((x, y) => (y - 12 + 3));
 
         this.name = name;
         this.locations = new HeaderColumn(locations);
