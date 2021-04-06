@@ -150,16 +150,18 @@ class Main {
 window.onload = function onload() {
     const main = new Main([
         new TimezoneList("Timezones", [
+            new Timezone("Pacific Time", "America/Los_Angeles"),
             new Timezone("Eastern Time", "America/New_York"),
             new Timezone("British Time", "Europe/London"),
         ]),
         new TimezoneList("Locations", [
+            new Timezone("Los Angeles", "America/Los_Angeles"),
             new Timezone("Ontario, Canada", "Canada/Central"),
             new Timezone("Boston, U.S.A.", "America/New_York"),
-            new Timezone("Connecticut, U.S.A.", "America/New_York"),
+            // new Timezone("Connecticut, U.S.A.", "America/New_York"),
             new Timezone("Reading, England", "Europe/London"),
             new Timezone("Amsterdam, Netherlands", "Europe/Amsterdam"),
-            new Timezone("Munich, Germany", "Europe/Berlin"),
+            // new Timezone("Munich, Germany", "Europe/Berlin"),
             new Timezone("Sydney, Australia", "Australia/Sydney"),
         ]),
     ]);
