@@ -115,18 +115,35 @@ header, footer {
 }
 
 .timezones .localtime {
-    padding: 0.5em 0;
     display: block;
-    text-decoration: none;
-    color: inherit;
     text-align: center;
+    position: relative;
 
     color: var(--white-light);
     background-color: var(--blue-dark);
 }
 
+.timezones .localtime .marker {
+    display: none;
+}
+
+.timezones .localtime .hour {
+    padding-top: 0.5em;
+}
+
 .timezones .localtime .ampm {
     color: var(--white-dark);
+    padding-bottom: 0.5em;
+}
+
+.timezones .localtime[now="true"] .marker {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+
+    display: block;
+    border-right: 1px solid red;
 }
 
 .timezones .localtime[now="true"][office-hours="true"],

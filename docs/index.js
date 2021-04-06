@@ -15,15 +15,19 @@ class TimeCell {
         this.hour = hour;
         this.location = location;
 
+        this.marker = redom.html("div.marker");
         this.hourSpan = redom.html("span.hour");
         this.ampmSpan = redom.html("span.ampm");
 
-        this.el = redom.html("span.localtime", [this.hourSpan, this.ampmSpan]);
+        this.el = redom.html("span.localtime", [this.marker, this.hourSpan, this.ampmSpan]);
     }
 
     update(utcDateTime) {
         const cellDateTime = utcDateTime.plus({ hour: this.hour });
         const localDateTime = cellDateTime.setZone(this.location.timezoneName);
+        const minute_percentage = Math.floor(cellDateTime.minute / 60 * 100);
+
+        redom.setStyle(this.marker, { width: `${minute_percentage}%` });
 
         redom.setAttr(this.el, {
             "same-day-as-here": utcDateTime.day === localDateTime.day,
@@ -130,7 +134,7 @@ class Main {
     }
 
     refresh() {
-        window.setInterval(() => this.update(luxon.DateTime.utc()), 5000);
+        window.setInterval(() => this.update(luxon.DateTime.utc()), 30000);
     }
 
     refresh_development() {
