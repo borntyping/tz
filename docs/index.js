@@ -114,6 +114,44 @@ class TimezoneList {
     }
 }
 
+
+class Favicon {
+    el;
+
+    constructor() {
+        this.el = redom.html("link", { rel: "icon" });
+    }
+
+    update(utcDateTime) {
+        const emoji = Favicon.getEmoji(utcDateTime);
+
+        redom.setAttr(this.el, {
+            href: `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${emoji}</text></svg>`
+        });
+    }
+
+    static emoji = [
+        ["🕛", "🕧"],
+        ["🕐", "🕜"],
+        ["🕑", "🕝"],
+        ["🕒", "🕞"],
+        ["🕓", "🕟"],
+        ["🕔", "🕠"],
+        ["🕕", "🕡"],
+        ["🕖", "🕢"],
+        ["🕗", "🕣"],
+        ["🕘", "🕤"],
+        ["🕙", "🕥"],
+        ["🕚", "🕦"],
+    ];
+
+    static getEmoji(utcDateTime) {
+        const hour = utcDateTime.hour % 12;
+        const minute = Math.floor(utcDateTime.minute / 30);
+        return this.emoji[hour][minute];
+    }
+}
+
 class Main {
     el;
 
@@ -121,15 +159,19 @@ class Main {
         const footer = redom.html("footer", redom.html("a", { href: "#" }, "Reset"));
 
         this.locations = locations;
+        this.favicon = new Favicon();
         this.el = redom.html("div", this.locations.concat(footer));
     }
 
-    update(utc) {
-        this.locations.forEach(l => l.update(utc));
+    update(utcDateTime) {
+        this.locations.forEach(l => l.update(utcDateTime));
+        this.favicon.update(utcDateTime);
     }
 
-    install(element) {
-        redom.mount(element, this);
+    install() {
+        redom.mount(document.getElementById("main"), this);
+        redom.mount(document.head, this.favicon);
+
         this.update(luxon.DateTime.utc());
     }
 
@@ -166,6 +208,6 @@ window.onload = function onload() {
         ]),
     ]);
 
-    main.install(document.getElementById("main"));
+    main.install();
     main.refresh();
 };
