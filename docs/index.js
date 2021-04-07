@@ -122,8 +122,8 @@ class Favicon {
         this.el = redom.html("link", { rel: "icon" });
     }
 
-    update(utcDateTime) {
-        const emoji = Favicon.getEmoji(utcDateTime);
+    update(localDateTime) {
+        const emoji = Favicon.getEmoji(localDateTime);
 
         redom.setAttr(this.el, {
             href: `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${emoji}</text></svg>`
@@ -145,9 +145,9 @@ class Favicon {
         ["🕚", "🕦"],
     ];
 
-    static getEmoji(utcDateTime) {
-        const hour = utcDateTime.hour % 12;
-        const minute = Math.floor(utcDateTime.minute / 30);
+    static getEmoji(localDateTime) {
+        const hour = localDateTime.hour % 12;
+        const minute = Math.floor(localDateTime.minute / 30);
         return this.emoji[hour][minute];
     }
 }
@@ -159,55 +159,55 @@ class Main {
         const footer = redom.html("footer", redom.html("a", { href: "#" }, "Reset"));
 
         this.locations = locations;
-        this.favicon = new Favicon();
         this.el = redom.html("div", this.locations.concat(footer));
     }
 
     update(utcDateTime) {
         this.locations.forEach(l => l.update(utcDateTime));
-        this.favicon.update(utcDateTime);
+    }
+}
+
+class App {
+    constructor() {
+        this.main = new Main([
+            new TimezoneList("Timezones", [
+                new Timezone("Pacific Time", "America/Los_Angeles"),
+                new Timezone("Eastern Time", "America/New_York"),
+                new Timezone("British Time", "Europe/London"),
+            ]),
+            new TimezoneList("Locations", [
+                new Timezone("Los Angeles", "America/Los_Angeles"),
+                new Timezone("Ontario, Canada", "Canada/Central"),
+                new Timezone("Boston, U.S.A.", "America/New_York"),
+                // new Timezone("Connecticut, U.S.A.", "America/New_York"),
+                new Timezone("Reading, England", "Europe/London"),
+                new Timezone("Amsterdam, Netherlands", "Europe/Amsterdam"),
+                // new Timezone("Munich, Germany", "Europe/Berlin"),
+                new Timezone("Sydney, Australia", "Australia/Sydney"),
+            ]),
+        ]);
+
+        this.favicon = new Favicon();
     }
 
-    install() {
-        redom.mount(document.getElementById("main"), this);
+    mount() {
+        redom.mount(document.getElementById("main"), this.main);
         redom.mount(document.head, this.favicon);
+        this.update();
+    }
 
-        this.update(luxon.DateTime.utc());
+    update() {
+        this.favicon.update(luxon.DateTime.local());
+        this.main.update(luxon.DateTime.utc());
     }
 
     refresh() {
-        window.setInterval(() => this.update(luxon.DateTime.utc()), 30000);
-    }
-
-    refresh_development() {
-        let now = luxon.DateTime.utc();
-
-        window.setInterval(() => {
-            now = now.plus({ hours: 1 });
-            this.update(now);
-        }, 1000);
+        window.setInterval(this.update, 30000);
     }
 }
 
 window.onload = function onload() {
-    const main = new Main([
-        new TimezoneList("Timezones", [
-            new Timezone("Pacific Time", "America/Los_Angeles"),
-            new Timezone("Eastern Time", "America/New_York"),
-            new Timezone("British Time", "Europe/London"),
-        ]),
-        new TimezoneList("Locations", [
-            new Timezone("Los Angeles", "America/Los_Angeles"),
-            new Timezone("Ontario, Canada", "Canada/Central"),
-            new Timezone("Boston, U.S.A.", "America/New_York"),
-            // new Timezone("Connecticut, U.S.A.", "America/New_York"),
-            new Timezone("Reading, England", "Europe/London"),
-            new Timezone("Amsterdam, Netherlands", "Europe/Amsterdam"),
-            // new Timezone("Munich, Germany", "Europe/Berlin"),
-            new Timezone("Sydney, Australia", "Australia/Sydney"),
-        ]),
-    ]);
-
-    main.install();
-    main.refresh();
+    const app = new App();
+    app.mount();
+    app.refresh();
 };
