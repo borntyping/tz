@@ -202,7 +202,7 @@ class App {
     }
 
     refresh() {
-        window.setInterval(this.update, 30000);
+        window.setInterval(() => { this.update(); }, 30000);
     }
 }
 
