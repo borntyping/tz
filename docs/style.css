@@ -51,51 +51,49 @@ header, footer {
     text-align: center;
 }
 
-.locations {
+.timezone-list {
     padding: 1em;
 }
 
-.locations .title {
+.timezone-list .title {
     text-align: center;
     margin: 1em;
 }
 
-.timezones {
+.timezone-grid {
     background-color: var(--black-light);
     display: grid;
-    grid-template-columns: 6fr repeat(25, 1fr);
-    grid-auto-flow: column;
+    grid-template-columns: 1fr 6fr repeat(24, 1fr);
+    grid-auto-flow: row;
     grid-row-gap: 0.5em;
 }
 
-.timezones .headers,
-.timezones .time {
+.timezone-row {
     display: contents;
 }
 
-.timezones .headers .location,
-.timezones .time .localtime {
+.timezone-grid .weather,
+.timezone-grid .description,
+.timezone-grid .localtime {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
     justify-content: center;
 }
 
-.timezones .location {
-    grid-column: 1;
-    padding: 0 1em;
+.timezone-grid .weather {
+    text-align: center;
 }
 
-
-.timezones .location .name {
+.timezone-grid .description .name {
     font-weight: bold;
 }
 
-.timezones .location .date {
+.timezone-grid .description .date {
     color: var(--white-dark);
 }
 
-.timezones .location .meta {
+.timezone-grid .description .offset {
     color: var(--white-dark);
 
     display: flex;
@@ -103,18 +101,18 @@ header, footer {
     justify-content: space-between;
 }
 
-.timezones .headers .hide {
+.timezone-grid .description .hide {
     opacity: 0;
     transition-property: opacity;
     transition-duration: 0.5s;
     transition-delay: 0.1s;
 }
 
-.timezones .headers:hover .hide {
+.timezone-grid .description:hover .hide {
     opacity: 1;
 }
 
-.timezones .localtime {
+.timezone-grid .localtime {
     display: block;
     text-align: center;
     position: relative;
@@ -123,56 +121,48 @@ header, footer {
     background-color: var(--blue-dark);
 }
 
-.timezones .localtime .marker {
-    display: none;
-}
-
-.timezones .localtime .hour {
+.timezone-grid .localtime .hour {
     padding-top: 0.5em;
 }
 
-.timezones .localtime .ampm {
+.timezone-grid .localtime .ampm {
     color: var(--white-dark);
     padding-bottom: 0.5em;
 }
 
-.timezones .localtime[now="true"] .marker {
+.timezone-grid .localtime .marker {
+    display: none;
+}
+
+.timezone-grid .localtime[now="true"] .marker {
     content: "";
     position: absolute;
     top: 0;
     bottom: 0;
 
     display: block;
-    border-right: 1px solid red;
+    border-right: 2px solid var(--purple-dark);
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 
-.timezones .localtime[now="true"][office-hours="true"],
-.timezones .localtime[now="true"][night-hours="false"]{
-    background-color: var(--purple-light);
-}
-
-.timezones .localtime[now="true"][office-hours="false"],
-.timezones .localtime[now="true"][night-hours="true"]{
-    background-color: var(--purple-dark);
-}
-
-.timezones .localtime[office-hours="true"] {
+.timezone-grid .localtime[office-hours="true"] {
     background-color: var(--blue-light);
 }
 
-.timezones .localtime[office-hours="true"] .ampm {
+.timezone-grid .localtime[office-hours="true"] .ampm {
 }
 
-.timezones .localtime[night-hours="true"] {
+.timezone-grid .localtime[night-hours="true"] {
     color: var(--grey-light);
     background-color: var(--black-light);
 }
 
-.timezones .localtime[night-hours="true"] .ampm {
+.timezone-grid .localtime[night-hours="true"] .ampm {
     color: var(--grey-dark);
 }
 
-.timezones .time:hover .localtime {
+.timezone-grid .time:hover .localtime {
     font-weight: bold;
     text-decoration: underline;
 }
