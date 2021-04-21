@@ -17,8 +17,8 @@ class TimezoneCell {
         this.location = location;
 
         this.marker = redom.html("div.marker");
-        this.hourSpan = redom.html("div.hour");
-        this.ampmSpan = redom.html("div.ampm");
+        this.hourSpan = redom.html("div.hour.primary");
+        this.ampmSpan = redom.html("div.ampm.secondary");
 
         this.el = redom.html("div.localtime", { "data-hour": hour }, [this.marker, this.hourSpan, this.ampmSpan]);
     }
@@ -31,7 +31,7 @@ class TimezoneCell {
         redom.setStyle(this.marker, { width: `${minute_percentage}%` });
 
         redom.setAttr(this.el, {
-            "same-day-as-here": localDateTime.day === remoteDateTime.day,
+            "lunch-hours": remoteDateTime.hour === 13,
             "office-hours": 9 <= remoteDateTime.hour && remoteDateTime.hour <= 18,
             "night-hours": 5 >= remoteDateTime.hour || remoteDateTime.hour >= 22,
             "now": localDateTime.hour === cellDateTime.hour,
@@ -49,12 +49,11 @@ class TimezoneRow {
     constructor(location, hours) {
         this.location = location;
 
-        this.name = redom.html("span.name");
-        this.offset = redom.html("span.offset")
+        this.name = redom.html("span.name.primary");
+        this.offset = redom.html("span.offset.secondary")
         this.description = redom.html("div.description", [this.name, this.offset]);
 
-        this.icon = redom.html("img", { src: "https://openweathermap.org/img/wn/50d.png" });
-        this.weather = redom.html("div.weather", this.icon)
+        this.weather = redom.html("div.weather")
 
         this.cells = hours.map(hour => new TimezoneCell(hour, location));
 
@@ -87,7 +86,7 @@ class TimezoneRow {
                 const icon = data.weather[0].icon
                 const src = `https://openweathermap.org/img/wn/${icon}.png`;
                 const title = `${data.name}: ${data.weather[0].description}, feels like ${data.main.temp}℃.`;
-                redom.setAttr(this.icon, { src: src, title: title });
+                redom.setChildren(this.weather, redom.html("img", { src: src, title: title }));
             });
         }
     }

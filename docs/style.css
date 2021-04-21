@@ -7,31 +7,50 @@ html, body, main {
 body {
     font-family: 'Trebuchet MS', sans-serif;
 
-    --turquoise-light: #1abc9c;
-    --turquoise-dark: #16a085;
-    --green-light: #2ECC71;
-    --green-dark: #27AE60;
-    --blue-light: #3498db;
-    --blue-dark: #2980b9;
-    --purple-light: #9B59B6;
-    --purple-dark: #8E44AD;
-    --black-light: #34495e;
-    --black-dark: #2c3e50;
-    --yellow-light: #F1C40F;
-    --yellow-dark: #F39C12;
-    --orange-light: #E67E22;
-    --orange-dark: #D35400;
-    --red-light: #E74C3C;
-    --red-dark: #C0392B;
-    --white-light: #ecf0f1;
-    --white-dark: #bdc3c7;
-    --grey-light: #95a5a6;
-    --grey-dark: #7f8c8d;
+    /* https://noeldelgado.github.io/shadowlord/#199ed9 */
+    --tint-100: #ffffff;
+    --tint-90: #e8f5fb;
+    --tint-80: #d1ecf7;
+    --tint-70: #bae2f4;
+    --tint-60: #a3d8f0;
+    --tint-50: #8ccfec;
+    --tint-40: #75c5e8;
+    --tint-30: #5ebbe4;
+    --tint-20: #47b1e1;
+    --tint-10: #30a8dd;
+    --shade-00: #199ed9;
+    --shade-10: #178ec3;
+    --shade-20: #147eae;
+    --shade-30: #126f98;
+    --shade-40: #0f5f82;
+    --shade-50: #0d4f6d;
+    --shade-60: #0a3f57;
+    --shade-70: #082f41;
+    --shade-80: #05202b;
+    --shade-90: #021016;
+    --shade-100: #000000;
 
-    --border: 2px solid var(--white-light);
+    --text-lightest: var(--tint-100);
+    --text-light: var(--tint-80);
+    --text-medium: var(--tint-60);
+    --text-dark: var(--tint-40);
+    --text-darkest: var(--tint-20);
 
-    background-color: var(--black-dark);
+    background-color: var(--shade-60);
+    color: var(--text-medium);
 }
+
+.timezone-grid            { background-color: var(--shade-50); }
+
+.timezone-grid .localtime { background-color: var(--shade-40); }
+.timezone-grid .localtime[night-hours="true"] { background-color: unset; }
+.timezone-grid .localtime[office-hours="true"] { background-color: var(--shade-20); }
+.timezone-grid .localtime[lunch-hours="true"] { background-color: var(--shade-00); }
+
+.timezone-grid .primary { color: var(--text-light); }
+.timezone-grid .secondary { color: var(--text-medium); }
+.timezone-grid .localtime[night-hours="true"] .primary { color: var(--text-medium); }
+.timezone-grid .localtime[night-hours="true"] .secondary { color: var(--text-dark); }
 
 main > div {
     display: flex;
@@ -39,7 +58,6 @@ main > div {
     flex-wrap: nowrap;
     justify-content: center;
     gap: 5em;
-    color: var(--white-light);
     height: 100%;
 }
 
@@ -61,11 +79,11 @@ header, footer {
 }
 
 .timezone-grid {
-    background-color: var(--black-light);
     display: grid;
     grid-template-columns: 1fr 6fr repeat(24, 1fr);
     grid-auto-flow: row;
-    grid-row-gap: 0.5em;
+    grid-row-gap: 1em;
+    padding: 1em;
 }
 
 .timezone-row {
@@ -97,13 +115,7 @@ header, footer {
     font-weight: bold;
 }
 
-.timezone-grid .description .date {
-    color: var(--white-dark);
-}
-
 .timezone-grid .description .offset {
-    color: var(--white-dark);
-
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-between;
@@ -124,17 +136,7 @@ header, footer {
     display: block;
     text-align: center;
     position: relative;
-
-    color: var(--white-light);
-    background-color: var(--blue-dark);
-}
-
-.timezone-grid .localtime .hour {
     padding-top: 0.5em;
-}
-
-.timezone-grid .localtime .ampm {
-    color: var(--white-dark);
     padding-bottom: 0.5em;
 }
 
@@ -149,32 +151,10 @@ header, footer {
     bottom: 0;
 
     display: block;
-    border-right: 2px solid var(--purple-dark);
-    margin-top: 2px;
-    margin-bottom: 2px;
-}
-
-.timezone-grid .localtime[office-hours="true"] {
-    background-color: var(--blue-light);
-}
-
-.timezone-grid .localtime[office-hours="true"] .ampm {
-}
-
-.timezone-grid .localtime[night-hours="true"] {
-    color: var(--grey-light);
-    background-color: var(--black-light);
-}
-
-.timezone-grid .localtime[night-hours="true"] .ampm {
-    color: var(--grey-dark);
+    border-right: 2px solid #30DAC1;
 }
 
 .timezone-grid .time:hover .localtime {
     font-weight: bold;
     text-decoration: underline;
-}
-
-footer {
-    color: var(--grey-dark);
 }
