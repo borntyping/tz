@@ -23,22 +23,22 @@ class TimezoneCell {
         this.el = redom.html("div.localtime", { "data-hour": hour }, [this.marker, this.hourSpan, this.ampmSpan]);
     }
 
-    update(utcDateTime) {
-        const cellDateTime = utcDateTime.setZone("Europe/London").set({ hour: this.hour });
-        const localDateTime = cellDateTime.setZone(this.location.timezoneName);
+    update(localDateTime) {
+        const cellDateTime = localDateTime.set({ hour: this.hour });
+        const remoteDateTime = cellDateTime.setZone(this.location.timezoneName);
         const minute_percentage = Math.floor(cellDateTime.minute / 60 * 100);
 
         redom.setStyle(this.marker, { width: `${minute_percentage}%` });
 
         redom.setAttr(this.el, {
-            "same-day-as-here": utcDateTime.day === localDateTime.day,
-            "office-hours": 9 <= localDateTime.hour && localDateTime.hour <= 18,
-            "night-hours": 5 >= localDateTime.hour || localDateTime.hour >= 22,
-            "now": utcDateTime.hour === cellDateTime.hour,
+            "same-day-as-here": localDateTime.day === remoteDateTime.day,
+            "office-hours": 9 <= remoteDateTime.hour && remoteDateTime.hour <= 18,
+            "night-hours": 5 >= remoteDateTime.hour || remoteDateTime.hour >= 22,
+            "now": localDateTime.hour === cellDateTime.hour,
         });
 
-        this.hourSpan.textContent = localDateTime.hour === 0 ? 12 : (localDateTime.hour <= 12 ? localDateTime.hour : localDateTime.hour - 12);
-        this.ampmSpan.textContent = localDateTime.hour >= 12 ? "pm" : "am";
+        this.hourSpan.textContent = remoteDateTime.hour === 0 ? 12 : (remoteDateTime.hour <= 12 ? remoteDateTime.hour : remoteDateTime.hour - 12);
+        this.ampmSpan.textContent = remoteDateTime.hour >= 12 ? "pm" : "am";
     }
 }
 
@@ -68,11 +68,11 @@ class TimezoneRow {
         )
     }
 
-    update(utcDateTime) {
-        const tzDateTime = utcDateTime.setZone(this.location.timezoneName);
+    update(localDateTime) {
+        const tzDateTime = localDateTime.setZone(this.location.timezoneName);
         this.name.textContent = this.location.displayName;
         this.offset.textContent = tzDateTime.offsetNameLong;
-        this.cells.forEach(c => c.update(utcDateTime));
+        this.cells.forEach(cell => cell.update(localDateTime));
         this.setWeatherIcon();
     }
 
@@ -109,8 +109,8 @@ class TimezoneList {
         ]);
     }
 
-    update(utcDateTime) {
-        this.rows.forEach(row => row.update(utcDateTime));
+    update(localDateTime) {
+        this.rows.forEach(row => row.update(localDateTime));
     }
 }
 
@@ -155,13 +155,13 @@ class Favicon {
 class Main {
     el;
 
-    constructor(locations) {
-        this.locations = locations;
-        this.el = redom.html("div", this.locations);
+    constructor(lists) {
+        this.lists = lists;
+        this.el = redom.html("div", this.lists);
     }
 
-    update(utcDateTime) {
-        this.locations.forEach(l => l.update(utcDateTime));
+    update(localDateTime) {
+        this.lists.forEach(timezoneList => timezoneList.update(localDateTime));
     }
 }
 
@@ -191,8 +191,9 @@ class App {
     }
 
     update() {
-        this.favicon.update(luxon.DateTime.local());
-        this.main.update(luxon.DateTime.utc());
+        const localDateTime = luxon.DateTime.local()
+        this.favicon.update(localDateTime);
+        this.main.update(localDateTime);
     }
 
     refresh() {
