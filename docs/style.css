@@ -72,7 +72,6 @@ header, footer {
     display: contents;
 }
 
-.timezone-grid .weather,
 .timezone-grid .description,
 .timezone-grid .localtime {
     display: flex;
@@ -82,7 +81,16 @@ header, footer {
 }
 
 .timezone-grid .weather {
-    text-align: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+.timezone-grid .weather img {
+    width: 3em;
+    height: 3em;
+    display: block;
 }
 
 .timezone-grid .description .name {

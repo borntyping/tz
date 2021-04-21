@@ -2,9 +2,10 @@ class Timezone {
     displayName;
     timezoneName;
 
-    constructor(displayName, timezoneName) {
+    constructor(displayName, timezoneName, weatherName) {
         this.displayName = displayName;
         this.timezoneName = timezoneName;
+        this.weatherName = weatherName;
     }
 }
 
@@ -52,7 +53,8 @@ class TimezoneRow {
         this.offset = redom.html("span.offset")
         this.description = redom.html("div.description", [this.name, this.offset]);
 
-        this.weather = redom.html("div.weather", "⛅")
+        this.icon = redom.html("img", { src: "https://openweathermap.org/img/wn/50d.png" });
+        this.weather = redom.html("div.weather", this.icon)
 
         this.cells = hours.map(hour => new TimezoneCell(hour, location));
 
@@ -70,8 +72,24 @@ class TimezoneRow {
         const tzDateTime = utcDateTime.setZone(this.location.timezoneName);
         this.name.textContent = this.location.displayName;
         this.offset.textContent = tzDateTime.offsetNameLong;
-
         this.cells.forEach(c => c.update(utcDateTime));
+        this.setWeatherIcon();
+    }
+
+    setWeatherIcon() {
+        if (this.location.weatherName !== undefined) {
+            const url = new URL("https://api.openweathermap.org/data/2.5/weather");
+            url.searchParams.append("q", this.location.weatherName);
+            url.searchParams.append("units", "metric");
+            url.searchParams.append("appid", "4b87a92fa08f8449e4439c5bfcd0fe3b");
+            fetch(url.toString()).then(data => data.json()).then(data => {
+                console.log(data);
+                const icon = data.weather[0].icon
+                const src = `https://openweathermap.org/img/wn/${icon}.png`;
+                const title = `${data.name}: ${data.weather[0].description}, feels like ${data.main.temp}℃.`;
+                redom.setAttr(this.icon, { src: src, title: title });
+            });
+        }
     }
 }
 
@@ -156,14 +174,10 @@ class App {
                 new Timezone("British Time", "Europe/London"),
             ]),
             new TimezoneList("Locations", [
-                new Timezone("Los Angeles", "America/Los_Angeles"),
-                new Timezone("Ontario, Canada", "Canada/Central"),
-                new Timezone("Boston, U.S.A.", "America/New_York"),
-                // new Timezone("Connecticut, U.S.A.", "America/New_York"),
-                new Timezone("Reading, England", "Europe/London"),
-                new Timezone("Amsterdam, Netherlands", "Europe/Amsterdam"),
-                // new Timezone("Munich, Germany", "Europe/Berlin"),
-                new Timezone("Sydney, Australia", "Australia/Sydney"),
+                new Timezone("Los Angeles", "America/Los_Angeles", "Los Angeles,US"),
+                new Timezone("Ontario, Canada", "Canada/Central", "Ontario,CA"),
+                new Timezone("Boston, U.S.A.", "America/New_York", "Boston,US"),
+                new Timezone("Reading, England", "Europe/London", "London,UK"),
             ]),
         ]);
 
