@@ -158,3 +158,8 @@ header, footer {
     font-weight: bold;
     text-decoration: underline;
 }
+
+footer a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
