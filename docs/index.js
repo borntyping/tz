@@ -224,12 +224,14 @@ class App {
     }
 
     refresh() {
-        window.setInterval(this.update, 30000);
+        window.setInterval(() => {
+            this.update();
+        }, 30000);
     }
 }
 
 window.onload = function onload() {
-    const app = new App();
-    app.mount();
-    app.refresh();
+    window.app = new App();
+    window.app.mount();
+    window.app.refresh();
 };
