@@ -32,8 +32,8 @@ class TimezoneCell {
 
         redom.setAttr(this.el, {
             "lunch-hours": remoteDateTime.hour === 13,
-            "office-hours": 9 <= remoteDateTime.hour && remoteDateTime.hour <= 18,
-            "night-hours": 5 >= remoteDateTime.hour || remoteDateTime.hour >= 22,
+            "office-hours": 9 <= remoteDateTime.hour && remoteDateTime.hour <= 17,
+            "night-hours": 5 >= remoteDateTime.hour || remoteDateTime.hour >= 21,
             "now": localDateTime.hour === cellDateTime.hour,
         });
 
