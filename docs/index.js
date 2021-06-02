@@ -202,9 +202,10 @@ class App {
     constructor() {
         this.main = new Main([
             new TimezoneList("Timezones", [
-                new Timezone("Los Angeles", "America/Los_Angeles", "Los Angeles,US"),
-                new Timezone("Boston, U.S.A.", "America/New_York", "Boston,US"),
                 new Timezone("Reading, England", "Europe/London", "London,UK"),
+                new Timezone("Boston, U.S.A.", "America/New_York", "Boston,US"),
+                new Timezone("Montana, USA.", "America/Denver", "Montana,US"),
+                new Timezone("Los Angeles", "America/Los_Angeles", "Los Angeles,US"),
             ]),
         ]);
 
