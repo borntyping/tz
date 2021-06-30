@@ -80,7 +80,7 @@ header, footer {
 
 .timezone-grid {
     display: grid;
-    grid-template-columns: 1fr 6fr repeat(24, 1fr);
+    grid-template-columns: 6fr repeat(24, 1fr);
     grid-auto-flow: row;
     grid-row-gap: 1em;
     padding: 1em;
@@ -96,19 +96,6 @@ header, footer {
     flex-direction: column;
     flex-wrap: nowrap;
     justify-content: center;
-}
-
-.timezone-grid .weather {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: center;
-}
-
-.timezone-grid .weather img {
-    width: 3em;
-    height: 3em;
-    display: block;
 }
 
 .timezone-grid .description .name {

@@ -2,10 +2,9 @@ class Timezone {
     displayName;
     timezoneName;
 
-    constructor(displayName, timezoneName, weatherName) {
+    constructor(displayName, timezoneName) {
         this.displayName = displayName;
         this.timezoneName = timezoneName;
-        this.weatherName = weatherName;
     }
 }
 
@@ -53,8 +52,6 @@ class TimezoneRow {
         this.offset = redom.html("span.offset.secondary")
         this.description = redom.html("div.description", [this.name, this.offset]);
 
-        this.weather = redom.html("div.weather")
-
         this.cells = hours.map(hour => new TimezoneCell(hour, location));
 
         this.el = redom.html(
@@ -63,44 +60,15 @@ class TimezoneRow {
                 "data-location-display-name": location.displayName,
                 "data-location-timezone-name": location.timezoneName,
             },
-            [this.weather, this.description, this.cells],
+            [this.description, this.cells],
         )
     }
 
-    update(localDateTime, appid) {
+    update(localDateTime) {
         const tzDateTime = localDateTime.setZone(this.location.timezoneName);
         this.name.textContent = this.location.displayName;
         this.offset.textContent = tzDateTime.offsetNameLong;
         this.cells.forEach(cell => cell.update(localDateTime));
-        this.setWeatherIcon(appid);
-    }
-
-    setWeatherIcon(appid) {
-        if (this.location.weatherName !== undefined) {
-            if (appid) {
-                const url = new URL("https://api.openweathermap.org/data/2.5/weather");
-                url.searchParams.append("q", this.location.weatherName);
-                url.searchParams.append("units", "metric");
-                url.searchParams.append("appid", appid);
-                fetch(url.toString())
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Failed to fetch weather from ${url}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        const icon = data.weather[0].icon
-                        const src = `https://openweathermap.org/img/wn/${icon}.png`;
-                        const title = `${data.name}: ${data.weather[0].description}, feels like ${data.main.temp}℃.`;
-                        redom.setChildren(this.weather, redom.html("img", {src: src, title: title}));
-                    }).catch((error) => {
-                        console.error(error);
-                });
-            } else {
-                redom.setChildren(this.weather, []);
-            }
-        }
     }
 }
 
@@ -120,8 +88,8 @@ class TimezoneList {
         ]);
     }
 
-    update(localDateTime, appid) {
-        this.rows.forEach(row => row.update(localDateTime, appid));
+    update(localDateTime) {
+        this.rows.forEach(row => row.update(localDateTime));
     }
 }
 
@@ -168,33 +136,11 @@ class Main {
 
     constructor(lists) {
         this.lists = lists;
-
-        this.footer = redom.html("footer");
-        this.setAPIKeyElement = redom.html("a", "Set OpenWeatherMap API key");
-        this.clearAPIKeyElement = redom.html("a", "Clear OpenWeatherMap API key");
-
-        this.setAPIKeyElement.addEventListener('click', _ => this.setAPIKey());
-        this.clearAPIKeyElement.addEventListener('click', _ => this.clearAPIKey());
-        this.el = redom.html("div", [this.lists, this.footer]);
+        this.el = redom.html("div", this.lists);
     }
 
     update(localDateTime) {
-        redom.setChildren(this.footer, this.appid ? this.clearAPIKeyElement : this.setAPIKeyElement);
-        this.lists.forEach(timezoneList => timezoneList.update(localDateTime, this.appid));
-    }
-
-    get appid() {
-        return window.localStorage.getItem('openWeatherMapAPIKey');
-    }
-
-    setAPIKey() {
-        window.localStorage.setItem('openWeatherMapAPIKey', window.prompt("Set OpenWeatherMap API key", undefined));
-        this.update(luxon.DateTime.local());
-    }
-
-    clearAPIKey() {
-        window.localStorage.removeItem('openWeatherMapAPIKey');
-        this.update(luxon.DateTime.local());
+        this.lists.forEach(timezoneList => timezoneList.update(localDateTime));
     }
 }
 
