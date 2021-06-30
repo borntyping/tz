@@ -2,18 +2,19 @@ class Timezone {
     displayName;
     timezoneName;
 
-    constructor(displayName, timezoneName) {
+    constructor(displayName, timezoneName, emoji) {
         this.displayName = displayName;
         this.timezoneName = timezoneName;
+        this.emoji = emoji;
     }
 }
 
 class TimezoneCell {
     el;
 
-    constructor(hour, location) {
+    constructor(hour, timezone) {
         this.hour = hour;
-        this.location = location;
+        this.timezone = timezone;
 
         this.marker = redom.html("div.marker");
         this.hourSpan = redom.html("div.hour.primary");
@@ -24,7 +25,7 @@ class TimezoneCell {
 
     update(localDateTime) {
         const cellDateTime = localDateTime.set({hour: this.hour});
-        const remoteDateTime = cellDateTime.setZone(this.location.timezoneName);
+        const remoteDateTime = cellDateTime.setZone(this.timezone.timezoneName);
         const minute_percentage = Math.floor(cellDateTime.minute / 60 * 100);
 
         redom.setStyle(this.marker, {width: `${minute_percentage}%`});
@@ -43,30 +44,31 @@ class TimezoneCell {
 
 class TimezoneRow {
     el;
-    location;
+    timezone;
 
-    constructor(location, hours) {
-        this.location = location;
+    constructor(timezone, hours) {
+        this.timezone = timezone;
 
         this.name = redom.html("span.name.primary");
         this.offset = redom.html("span.offset.secondary")
-        this.description = redom.html("div.description", [this.name, this.offset]);
 
-        this.cells = hours.map(hour => new TimezoneCell(hour, location));
+        this.emoji = redom.html("div.emoji", this.timezone.emoji);
+        this.description = redom.html("div.description", [this.name, this.offset]);
+        this.cells = hours.map(hour => new TimezoneCell(hour, timezone));
 
         this.el = redom.html(
             "div.timezone-row",
             {
-                "data-location-display-name": location.displayName,
-                "data-location-timezone-name": location.timezoneName,
+                "data-location-display-name": timezone.displayName,
+                "data-location-timezone-name": timezone.timezoneName,
             },
-            [this.description, this.cells],
+            [this.emoji, this.description, this.cells],
         )
     }
 
     update(localDateTime) {
-        const tzDateTime = localDateTime.setZone(this.location.timezoneName);
-        this.name.textContent = this.location.displayName;
+        const tzDateTime = localDateTime.setZone(this.timezone.timezoneName);
+        this.name.textContent = this.timezone.displayName;
         this.offset.textContent = tzDateTime.offsetNameLong;
         this.cells.forEach(cell => cell.update(localDateTime));
     }
@@ -148,10 +150,10 @@ class App {
     constructor() {
         this.main = new Main([
             new TimezoneList("Timezones", [
-                new Timezone("Reading, England", "Europe/London", "London,UK"),
-                new Timezone("Boston, U.S.A.", "America/New_York", "Boston,US"),
-                new Timezone("Montana, USA.", "America/Denver", "Montana,US"),
-                new Timezone("Los Angeles", "America/Los_Angeles", "Los Angeles,US"),
+                new Timezone("Reading, England", "Europe/London", "🇬🇧"),
+                new Timezone("Boston, U.S.A.", "America/New_York", "🇺🇸"),
+                new Timezone("Montana, USA.", "America/Denver", "🇺🇸"),
+                new Timezone("Los Angeles", "America/Los_Angeles", "🇺🇸"),
             ]),
         ]);
 
